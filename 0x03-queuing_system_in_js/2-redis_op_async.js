@@ -1,6 +1,8 @@
-// Redis basic operations
 import redis from "redis";
+import { promisify } from "util";
+
 const client = redis.createClient();
+const asyncGet = promisify(client.get).bind(client);
 
 client
   .on("error", (error) => {
@@ -15,12 +17,14 @@ function setNewSchool(schoolName, value) {
     redis.print(`Reply: ${reply}`);
   });
 }
-function displaySchoolValue(schoolName) {
-  client.get(schoolName, (err, reply) => {
-    console.log(reply);
-  });
+
+async function displaySchoolValue(schoolName) {
+  const reply = await asyncGet(schoolName);
+  console.log(reply);
 }
 
-displaySchoolValue("Holberton");
-setNewSchool("HolbertonSanFrancisco", "100");
-displaySchoolValue("HolbertonSanFrancisco");
+(async () => {
+  await displaySchoolValue("Holberton");
+  setNewSchool("HolbertonSanFrancisco", "100");
+  await displaySchoolValue("HolbertonSanFrancisco");
+})();
