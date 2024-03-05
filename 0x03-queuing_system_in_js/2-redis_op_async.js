@@ -1,3 +1,4 @@
+// Redis client and async operation
 import redis from "redis";
 import { promisify } from "util";
 
